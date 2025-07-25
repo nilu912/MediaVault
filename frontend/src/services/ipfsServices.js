@@ -15,7 +15,10 @@ const pinFileToIPFS = async (file) => {
     cidVersion: 1,
   });
   formData.append("pinataOptions", option);
-
+  console.log(
+    import.meta.env.VITE_PINATA_API_KEY,
+    import.meta.env.VITE_PINATA_SECRET_API_KEY
+  );
   const res = await axios.post(`${pinataBaseURL}/pinFileToIPFS`, formData, {
     maxBodyLength: "infinity",
     headers: {

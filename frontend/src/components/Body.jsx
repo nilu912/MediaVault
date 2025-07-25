@@ -2,17 +2,20 @@ import React, { useState } from "react";
 import { useWallet } from "../context/WalletContext";
 import { pinFileToIPFS, pinJSONToIPFS } from "../services/ipfsServices";
 
-const Body = async () => {
-  const { val } = useWallet();
+const Body = () => {
+  const { walletAddress } = useWallet();
   const [file, setFile] = useState(null);
   const [fileUrl, setFileUrl] = useState("");
 
   const handleFileChange = (e) => {
+    // console.log(e.target.files[0])
     setFile(e.target.files[0]);
   };
 
   const handleToUpload = async () => {
+    console.log("click")
     if (!file) {
+      // console.log(file)
       alert("Please select a file firls!");
       return;
     }
@@ -31,7 +34,7 @@ const Body = async () => {
         <input
           type="file"
           className="border-2 p-3 bg-blue-100"
-          onClick={handleFileChange}
+          onChange={handleFileChange}
         />
         <button
           className="bg-blue-500 p-3 text-white w-[10rem]"
@@ -43,7 +46,10 @@ const Body = async () => {
           <div className="mt-4">
             <p>File uploaded to IPFS: </p>
             <a
-              href={`https://gateway.pinata.cloud/ipfs/${fileUrl}`}
+              href={`https://gateway.pinata.cloud/ipfs/${fileUrl.replace(
+                "ipfs://",
+                ""
+              )}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-700 underline"
