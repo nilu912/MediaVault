@@ -20,7 +20,7 @@ const WalletProvider = ({ children }) => {
       const ethProvider = new BrowserProvider(window.ethereum);
       const signer = await ethProvider.getSigner();
       const address = await signer.getAddress();
-        console.log(address)
+      console.log(address);
       setProvider(ethProvider);
       setWalletAddress(address);
       setIsConnected(true);
