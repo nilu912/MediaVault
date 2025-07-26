@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useWallet } from "../context/WalletContext";
 import { pinFileToIPFS, pinJSONToIPFS } from "../services/ipfsServices";
+import axios from "axios";
 
 const Body = () => {
   const { walletAddress } = useWallet();
@@ -13,14 +14,20 @@ const Body = () => {
   };
 
   const handleToUpload = async () => {
-    console.log("click")
+    console.log("click");
     if (!file) {
       // console.log(file)
       alert("Please select a file firls!");
       return;
     }
     try {
-      const result = await pinFileToIPFS(file);
+      // const result = await pinFileToIPFS(file);
+      const formData = new FormData();
+      formData.append("file", file);
+      const result = await axios.post(
+        `${import.meta.env.PORT}/upload`,
+        formData
+      );
       setFileUrl(result);
       console.log("file pinned to ipfs", result);
     } catch (err) {
