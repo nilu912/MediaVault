@@ -18,10 +18,10 @@ app.get("/api", (req, res) => {
 });
 app.post("/api/upload", upload.single("file"), async (req, res, next) => {
   //   console.log("click");
-    // const {metadata} = req.body;
-    // console.log(metadata);
-    // return;
-    const file = fs.createReadStream(req.file.path);
+  const { metaDataReq } = req.body;
+  console.log(metaDataReq);
+  //   return;
+  const file = fs.createReadStream(req.file.path);
 
   const formData = new FormData();
   formData.append("file", file);
@@ -30,6 +30,7 @@ app.post("/api/upload", upload.single("file"), async (req, res, next) => {
     JSON.stringify({ name: req.file.filename })
   );
   formData.append("pinataOptions", JSON.stringify({ cidVersion: 1 }));
+  //   formData.append("metadata", metadata);
 
   try {
     const response = await axios.post(
@@ -44,13 +45,36 @@ app.post("/api/upload", upload.single("file"), async (req, res, next) => {
         },
       }
     );
+    console.log(response.data.IpfsHash);
+    const metadata = {
+      name: JSON.parse(metaDataReq).name,
+      description: JSON.parse(metaDataReq).description,
+      image: `https://gateway.pinata.cloud/ipfs/${response.data.IpfsHash}`,
+    };
+    console.log(metadata)
+    const secResponse = await axios.post(
+      "https://api.pinata.cloud/pinning/pinJSONToIPFS",
+      metadata,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          pinata_api_key: process.env.PINATA_API_KEY,
+          pinata_secret_api_key: process.env.PINATA_SECRET_API_KEY,
+        },
+      }
+    );
+    console.log(secResponse.data.IpfsHash);
     try {
       fs.unlinkSync(req.file.path);
     } catch (err) {
       console.err(err);
     }
-    // console.log(response.data.IpfsHash);
-    res.status(200).json({ hash: response.data.IpfsHash });
+    console.log(response.data.IpfsHash);
+    res.status(200).json({
+      imgHash: response.data.IpfsHash,
+      metadataHash: secResponse.data.IpfsHash,
+      metadata,
+    });
   } catch (err) {
     console.error(err.response?.data || err.message);
     res.status(500).json({

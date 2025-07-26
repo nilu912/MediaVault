@@ -4,12 +4,12 @@ import { pinFileToIPFS, pinJSONToIPFS } from "../services/ipfsServices";
 import axios from "axios";
 
 const Body = () => {
-  const { walletAddress } = useWallet();
+  const { walletAddress, mintNFT } = useWallet();
   const [file, setFile] = useState(null);
   const [fileUrl, setFileUrl] = useState("");
   const [data, setData] = useState({
-    tname: '',
-    description: ''
+    tname: "",
+    description: "",
   });
 
   const handleFileChange = (e) => {
@@ -17,11 +17,12 @@ const Body = () => {
     setFile(e.target.files[0]);
   };
   const handleInputData = (e) => {
-    setData((prev)=> ({
+    const { name, value } = e.target;
+    setData((prev) => ({
       ...prev,
-      [e.taget.name]: e.target.value,
-  }))
-  }
+      [name]: value,
+    }));
+  };
 
   const handleToUpload = async () => {
     if (!file) {
@@ -33,18 +34,16 @@ const Body = () => {
       // const result = await pinFileToIPFS(file);
       const formData = new FormData();
       formData.append("file", file);
-      const metadata = {
+      formData.append("metaDataReq", JSON.stringify({
         name: data.tname,
-        description: data.description
-      }
+        description: data.description,
+      }));
       const result = await axios.post(
         `${import.meta.env.VITE_PORT}/upload`,
         formData
       );
       setFileUrl(result);
-      // console.log("fier");
-      // const result = await axios.get(`${import.meta.env.VITE_PORT}`, );
-
+      mintNFT(`ipfs://${result.metadataHash}`)
       console.log("file pinned to ipfs", result);
     } catch (err) {
       console.error(err);
@@ -54,9 +53,19 @@ const Body = () => {
     <div className="flex flex-col items-center h-screen">
       <div className="bg-red-100 w-1/2 p-2 mt-30 h-[20rem] flex flex-col justify-top items-left gap-5 p-5 pt-10">
         <h4>Name</h4>
-        <input type="text" name="tname" onChange={handleInputData} placeholder="Enter name"/>
+        <input
+          type="text"
+          name="tname"
+          onChange={handleInputData}
+          placeholder="Enter name"
+        />
         <h4>Description</h4>
-        <input type="text" name="description" onChange={handleInputData} placeholder="Enter description"/>
+        <input
+          type="text"
+          name="description"
+          onChange={handleInputData}
+          placeholder="Enter description"
+        />
         <h4>Select file to upload</h4>
         <input
           type="file"
@@ -73,7 +82,7 @@ const Body = () => {
           <div className="mt-4">
             <p>File uploaded to IPFS: </p>
             <a
-              href={`https://gateway.pinata.cloud/ipfs/${fileUrl.data.hash}`}
+              href={`https://gateway.pinata.cloud/ipfs/${fileUrl.data.imgHash}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-700 underline"
