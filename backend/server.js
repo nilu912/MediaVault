@@ -12,8 +12,16 @@ const app = express();
 app.use(cors());
 const upload = multer({ dest: "uploads/" });
 
+app.get("/api", (req, res) => {
+  // console.log("click")
+  res.status(200).json({ message: "Server is running" });
+});
 app.post("/api/upload", upload.single("file"), async (req, res, next) => {
-  const file = fs.createReadStream(req.file.path);
+  //   console.log("click");
+    // const {metadata} = req.body;
+    // console.log(metadata);
+    // return;
+    const file = fs.createReadStream(req.file.path);
 
   const formData = new FormData();
   formData.append("file", file);
@@ -36,6 +44,12 @@ app.post("/api/upload", upload.single("file"), async (req, res, next) => {
         },
       }
     );
+    try {
+      fs.unlinkSync(req.file.path);
+    } catch (err) {
+      console.err(err);
+    }
+    // console.log(response.data.IpfsHash);
     res.status(200).json({ hash: response.data.IpfsHash });
   } catch (err) {
     console.error(err.response?.data || err.message);
