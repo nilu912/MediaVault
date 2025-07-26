@@ -42,9 +42,10 @@ const Body = () => {
         `${import.meta.env.VITE_PORT}/upload`,
         formData
       );
-      setFileUrl(result);
-      mintNFT(`ipfs://${result.metadataHash}`)
+      const res = setFileUrl(result);
+      mintNFT(`ipfs://${result.data.metadataHash}`)
       console.log("file pinned to ipfs", result);
+      console.log(res)
     } catch (err) {
       console.error(err);
     }

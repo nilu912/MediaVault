@@ -10,6 +10,7 @@ const WalletProvider = ({ children }) => {
   const [provider, setProvider] = useState(null);
   const [isConnected, setIsConnected] = useState();
   const [contract, setContract] = useState(null);
+  const [signer, setSigner] = useState(null)
 
   useEffect(() => {
     console.log("ethers.providers");
@@ -24,13 +25,14 @@ const WalletProvider = ({ children }) => {
       const signer = await ethProvider.getSigner();
       const address = await signer.getAddress();
 
-      const contractOBJ = new ethers.Contract(contractAddress, contractABI, signer);
+      const contractOBJ = new ethers.Contract(contractAddress, contractABI.abi, signer);
 
       console.log(address);
       setProvider(ethProvider);
       setWalletAddress(address);
       setIsConnected(true);
       setContract(contractOBJ)
+      setSigner(signer)
     } catch (err) {
       console.error(err);
     }
@@ -38,9 +40,10 @@ const WalletProvider = ({ children }) => {
 
   const mintNFT = async (tokenURI) => {
     try{
-      const tx = contract.safeMint(signer.address, tokenURI);
+      const tx = await contract.safeMint(signer.address, tokenURI);
       await tx.wait();
       console.log("Minted:", tx.hash)
+      return tx.hash;
     }catch(err){
       console.error(err)
     }
