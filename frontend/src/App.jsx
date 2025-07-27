@@ -6,7 +6,7 @@ function App() {
   return (
     <>
       <WalletProvider>
-        <div className="bg-gray-500 h-screen w-screen flex flex-col">
+        <div className="bg-[#0f0f1c] h-screen w-screen flex flex-col">
           <Header />
           <Body />
         </div>

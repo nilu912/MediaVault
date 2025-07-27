@@ -52,7 +52,7 @@ const Body = () => {
   };
   return (
     <div className="flex flex-col items-center h-screen">
-      <div className="bg-red-100 w-1/2 p-2 mt-30 h-[20rem] flex flex-col justify-top items-left gap-5 p-5 pt-10">
+      <div className="bg-[rgba(255, 255, 255, 0.05)] w-1/2 p-2 mt-30 h-[20rem] flex flex-col justify-top items-left gap-5 p-5 pt-10">
         <h4>Name</h4>
         <input
           type="text"

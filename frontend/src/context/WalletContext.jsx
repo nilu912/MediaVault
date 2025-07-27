@@ -3,18 +3,53 @@ import { ethers, BrowserProvider } from "ethers";
 const WalletContext = createContext();
 export const useWallet = () => useContext(WalletContext);
 const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
-import contractABI from "../contract/MediaVault.json"
+import contractABI from "../contract/MediaVault.json";
 
 const WalletProvider = ({ children }) => {
   const [walletAddress, setWalletAddress] = useState(null);
   const [provider, setProvider] = useState(null);
   const [isConnected, setIsConnected] = useState();
   const [contract, setContract] = useState(null);
-  const [signer, setSigner] = useState(null)
+  const [signer, setSigner] = useState(null);
 
   useEffect(() => {
-    console.log("ethers.providers");
+    const reConnectWallet = async () => {
+      if (window.ethereum && localStorage.getItem("wallet") != null) {
+        const ethProvider = new BrowserProvider(window.ethereum);
+        if ((await ethProvider.listAccounts()).length == 0) return;
+        try {
+          const signer = await ethProvider.getSigner();
+          const address = await signer.getAddress();
+
+          const Contract = new ethers.Contract(
+            contractAddress,
+            contractABI.abi,
+            signer
+          );
+          setContract(Contract);
+
+          setProvider(ethProvider);
+          setSigner(signer);
+          setWalletAddress(address);
+          setIsConnected(true);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    };
+    reConnectWallet();
+
+    const handleAccountChanged = () => {
+      window.location.reload();
+    };
+    window.ethereum.on("accountsChanged", handleAccountChanged);
+    window.ethereum.on("chainChanged", handleAccountChanged);
+    return () => {
+      window.ethereum.removeListener("accountsChanged", handleAccountChanged);
+      window.ethereum.removeListener("chainChanged", handleAccountChanged)
+    };
   }, []);
+
   const connectWallet = async () => {
     if (!window.ethereum) {
       alert("Metamaks not installed, please install it!");
@@ -25,32 +60,43 @@ const WalletProvider = ({ children }) => {
       const signer = await ethProvider.getSigner();
       const address = await signer.getAddress();
 
-      const contractOBJ = new ethers.Contract(contractAddress, contractABI.abi, signer);
+      const contractOBJ = new ethers.Contract(
+        contractAddress,
+        contractABI.abi,
+        signer
+      );
 
-      console.log(address);
       setProvider(ethProvider);
       setWalletAddress(address);
       setIsConnected(true);
-      setContract(contractOBJ)
-      setSigner(signer)
+      setContract(contractOBJ);
+      setSigner(signer);
+      localStorage.setItem("wallet", address);
     } catch (err) {
       console.error(err);
     }
   };
 
   const mintNFT = async (tokenURI) => {
-    try{
+    try {
       const tx = await contract.safeMint(signer.address, tokenURI);
       await tx.wait();
-      console.log("Minted:", tx.hash)
+      console.log("Minted:", tx.hash);
       return tx.hash;
-    }catch(err){
-      console.error(err)
+    } catch (err) {
+      console.error(err);
     }
-  }
+  };
   return (
     <WalletContext.Provider
-      value={{ walletAddress, provider, isConnected, connectWallet, mintNFT, contract }}
+      value={{
+        walletAddress,
+        provider,
+        isConnected,
+        connectWallet,
+        mintNFT,
+        contract,
+      }}
     >
       {children}
     </WalletContext.Provider>
