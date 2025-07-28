@@ -1,99 +1,93 @@
 import React, { useState } from "react";
 import { useWallet } from "../context/WalletContext";
-import { pinFileToIPFS, pinJSONToIPFS } from "../services/ipfsServices";
+import { useDropzone } from "react-dropzone";
+import { motion } from "framer-motion";
 import axios from "axios";
 
 const Body = () => {
   const { walletAddress, mintNFT } = useWallet();
   const [file, setFile] = useState(null);
   const [fileUrl, setFileUrl] = useState("");
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
     tname: "",
     description: "",
   });
 
-  const handleFileChange = (e) => {
-    // console.log(e.target.files[0])
-    setFile(e.target.files[0]);
-  };
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: (acceptedFiles) => setFile(acceptedFiles[0]),
+    // accept: { "image/*": [] },
+    multiple: false,
+  });
+
   const handleInputData = (e) => {
     const { name, value } = e.target;
-    setData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleToUpload = async () => {
-    if (!file) {
-      // console.log(file)
-      alert("Please select a file firls!");
+    if (!file || !data.tname || !data.description) {
+      alert("Please complete all fields and select a file!");
       return;
     }
     try {
-      // const result = await pinFileToIPFS(file);
+      setLoading(true);
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("metaDataReq", JSON.stringify({
-        name: data.tname,
-        description: data.description,
-      }));
+      formData.append(
+        "metaDataReq",
+        JSON.stringify({
+          name: data.tname,
+          description: data.description,
+        })
+      );
+
       const result = await axios.post(
         `${import.meta.env.VITE_PORT}/upload`,
         formData
       );
-      const res = setFileUrl(result);
-      mintNFT(`ipfs://${result.data.metadataHash}`)
-      console.log("file pinned to ipfs", result);
-      console.log(res)
+      try {
+        const hash = await mintNFT(`ipfs://${result.data.metadataHash}`);
+        console.log("transacition hash", hash);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setData({
+          tname: "",
+          description: "",
+        });
+        setFileUrl(result.data.imgHash);
+      }
+      setLoading(false);
     } catch (err) {
       console.error(err);
+      setLoading(false);
     }
   };
+
   return (
-    <div className="flex flex-col items-center h-screen">
-      <div className="bg-[rgba(255, 255, 255, 0.05)] w-1/2 p-2 mt-30 h-[20rem] flex flex-col justify-top items-left gap-5 p-5 pt-10">
-        <h4>Name</h4>
-        <input
-          type="text"
-          name="tname"
-          onChange={handleInputData}
-          placeholder="Enter name"
-        />
-        <h4>Description</h4>
-        <input
-          type="text"
-          name="description"
-          onChange={handleInputData}
-          placeholder="Enter description"
-        />
-        <h4>Select file to upload</h4>
-        <input
-          type="file"
-          className="border-2 p-3 bg-blue-100"
-          onChange={handleFileChange}
-        />
-        <button
-          className="bg-blue-500 p-3 text-white w-[10rem]"
-          onClick={handleToUpload}
-        >
-          Upload
+    <div className="relative min-h-screen w-screen flex flex-col items-center justify-center px-4 gap-10">
+      <section className="text-center py-20 bg-darkBackground text-white mt-50 h-[30rem]">
+        <h1 className="text-4xl sm:text-5xl font-bold mb-4">
+          Explore Your Digital Assets
+        </h1>
+        <p className="text-lg sm:text-xl text-white/70 mb-8">
+          Decentralized NFT Viewer Powered by Blockchain
+        </p>
+        <button className="bg-neonGreen text-black px-6 py-2 rounded-full font-semibold hover:bg-white transition">
+          Connect Wallet
         </button>
-        {fileUrl && (
-          <div className="mt-4">
-            <p>File uploaded to IPFS: </p>
-            <a
-              href={`https://gateway.pinata.cloud/ipfs/${fileUrl.data.imgHash}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-700 underline"
-            >
-              View on IPFS
-            </a>
-          </div>
-        )}
-      </div>
+      </section>
+      <section className="py-16 bg-white w-full text-black text-center px-6">
+        <h2 className="text-3xl font-bold mb-4">About Our Platform</h2>
+        <p className="max-w-2xl mx-auto text-lg">
+          This platform allows users to view, explore, and access NFTs directly
+          from the blockchain. It supports multiple file types including images,
+          audio, video, and documents stored via IPFS.
+        </p>
+      </section>
     </div>
   );
 };
+
 export default Body;

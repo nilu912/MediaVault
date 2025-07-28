@@ -1,3 +1,32 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .animate-flicker {
+    animation: flicker 2s infinite alternate;
+  }
+
+  .neon-text-glow {
+    text-shadow: 0 0 5px #39FF14, 0 0 10px #39FF14, 0 0 20px #39FF14;
+  }
+
+  .neon-button {
+    box-shadow: 0 0 5px #39FF14, 0 0 10px #39FF14, 0 0 15px #39FF14;
+  }
+}
+
+@keyframes flicker {
+  0% {
+    opacity: 0.85;
+    text-shadow: 0 0 5px #39FF14, 0 0 10px #39FF14;
+  }
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 10px #39FF14, 0 0 20px #39FF14;
+  }
+  100% {
+    opacity: 0.9;
+    text-shadow: 0 0 5px #39FF14, 0 0 15px #39FF14;
+  }
+}

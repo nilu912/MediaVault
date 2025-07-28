@@ -46,7 +46,7 @@ const WalletProvider = ({ children }) => {
     window.ethereum.on("chainChanged", handleAccountChanged);
     return () => {
       window.ethereum.removeListener("accountsChanged", handleAccountChanged);
-      window.ethereum.removeListener("chainChanged", handleAccountChanged)
+      window.ethereum.removeListener("chainChanged", handleAccountChanged);
     };
   }, []);
 
@@ -87,6 +87,48 @@ const WalletProvider = ({ children }) => {
       console.error(err);
     }
   };
+  const getAllMyNfts = async () => {
+    let nfts = [];
+    try {
+      let i = 0;
+      while (true) {
+        try {
+          const nftsRes = await contract.tokenURI(i);
+          const ownerOf = await contract.ownerOf(i);
+          i++;
+
+          if (ownerOf != walletAddress) continue;
+          nfts.push(nftsRes.replace("ipfs://", "https://ipfs.io/ipfs/"));
+        } catch (err) {
+          break;
+        }
+      }
+    } catch (err) {
+      console.error("err");
+    } finally {
+      return nfts;
+    }
+  };
+
+  const getAllNfts = async () => {
+    let nfts = [];
+    try {
+      let i = 0;
+      while (true) {
+        try {
+          const nftsRes = await contract.tokenURI(i);
+          nfts.push(nftsRes.replace("ipfs://", "https://ipfs.io/ipfs/"));
+          i++;
+        } catch (err) {
+          break;
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      return nfts;
+    }
+  };
   return (
     <WalletContext.Provider
       value={{
@@ -96,6 +138,8 @@ const WalletProvider = ({ children }) => {
         connectWallet,
         mintNFT,
         contract,
+        getAllMyNfts,
+        getAllNfts,
       }}
     >
       {children}
