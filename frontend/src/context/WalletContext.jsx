@@ -129,6 +129,13 @@ const WalletProvider = ({ children }) => {
       return nfts;
     }
   };
+  const disconnectWallet = () => {
+    setProvider(null);
+    setIsConnected(false);
+    setSigner(null);
+    setWalletAddress(null);
+    setContract(null);
+  };
   return (
     <WalletContext.Provider
       value={{
@@ -136,6 +143,7 @@ const WalletProvider = ({ children }) => {
         provider,
         isConnected,
         connectWallet,
+        disconnectWallet,
         mintNFT,
         contract,
         getAllMyNfts,

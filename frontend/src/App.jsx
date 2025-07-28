@@ -6,6 +6,7 @@ import WalletProvider from "./context/WalletContext";
 import MyNFTs from "./components/MyNfts";
 import AllNFTs from "./components/AllNfts"
 import MintNFTs from "./components/MintNFTs";
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
               <Route path="/mint" element={<MintNFTs />} />
             </Routes>
           </main>
+          <Footer />
         </div>
       </WalletProvider>
     </BrowserRouter>

@@ -5,65 +5,12 @@ import { motion } from "framer-motion";
 import axios from "axios";
 
 const Body = () => {
-  const { walletAddress, mintNFT } = useWallet();
-  const [file, setFile] = useState(null);
-  const [fileUrl, setFileUrl] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState({
-    tname: "",
-    description: "",
-  });
+  const { walletAddress, connectWallet } = useWallet();
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: (acceptedFiles) => setFile(acceptedFiles[0]),
-    // accept: { "image/*": [] },
-    multiple: false,
-  });
+  const handleConnectWallet = () => {
+    connectWallet();
+  }
 
-  const handleInputData = (e) => {
-    const { name, value } = e.target;
-    setData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleToUpload = async () => {
-    if (!file || !data.tname || !data.description) {
-      alert("Please complete all fields and select a file!");
-      return;
-    }
-    try {
-      setLoading(true);
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append(
-        "metaDataReq",
-        JSON.stringify({
-          name: data.tname,
-          description: data.description,
-        })
-      );
-
-      const result = await axios.post(
-        `${import.meta.env.VITE_PORT}/upload`,
-        formData
-      );
-      try {
-        const hash = await mintNFT(`ipfs://${result.data.metadataHash}`);
-        console.log("transacition hash", hash);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setData({
-          tname: "",
-          description: "",
-        });
-        setFileUrl(result.data.imgHash);
-      }
-      setLoading(false);
-    } catch (err) {
-      console.error(err);
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="relative min-h-screen w-screen flex flex-col items-center justify-center px-4 gap-10">
@@ -74,8 +21,8 @@ const Body = () => {
         <p className="text-lg sm:text-xl text-white/70 mb-8">
           Decentralized NFT Viewer Powered by Blockchain
         </p>
-        <button className="bg-neonGreen text-black px-6 py-2 rounded-full font-semibold hover:bg-white transition">
-          Connect Wallet
+        <button className="bg-[#6EE7B7] text-black px-6 py-2 rounded-full font-semibold hover:bg-white transition" onClick={connectWallet}>
+          {walletAddress ? `${walletAddress.slice(0,6)}...${walletAddress.slice(-4)}`: `Connect Wallet`}
         </button>
       </section>
       <section className="py-16 bg-white w-full text-black text-center px-6">

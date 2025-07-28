@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import axios from "axios";
 
 const MintNFTs = () => {
-  const { walletAddress, mintNFT } = useWallet();
+  const { walletAddress, mintNFT, isConnected } = useWallet();
   const [file, setFile] = useState(null);
   const [fileUrl, setFileUrl] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,6 +27,10 @@ const MintNFTs = () => {
 
   const handleToUpload = async () => {
     if (!file || !data.tname || !data.description) {
+      if (!isConnected) {
+        alert("Please Connect Wallet First!");
+        return;
+      }
       alert("Please complete all fields and select a file!");
       return;
     }
