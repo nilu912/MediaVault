@@ -10,8 +10,19 @@ const Header = () => {
     <header className="fixed top-0 left-0 w-full z-50 bg-white/5 backdrop-blur-md border-b border-blue-500/20 shadow-[0_0_20px_#3B82F6]/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex justify-between items-center text-white font-mono">
         {/* Logo */}
-        <h1 className="text-2xl md:text-3xl font-bold text-[#6EE7B7] drop-shadow-[0_0_6px_#3B82F6] animate-pulse tracking-wider">
+        {/* <h1 className="text-2xl md:text-3xl font-bold text-[#6EE7B7] drop-shadow-[0_0_6px_#3B82F6] animate-pulse tracking-wider">
           🚀 NeonVault
+        </h1> */}
+
+        <h1 className="flex gap-4 items-center space-x-3 text-2xl md:text-3xl font-bold text-[#6EE7B7] drop-shadow-[0_0_6px_#3B82F6] animate-pulse tracking-wider h-12">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center overflow-hidden">
+            <img
+              src="/pngegg.png"
+              alt="Rocket"
+              className="object-contain w-full h-full scale-150"
+            />
+          </div>
+          <span>NeonVault</span>
         </h1>
 
         {/* Navigation */}
