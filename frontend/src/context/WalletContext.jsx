@@ -39,6 +39,7 @@ const WalletProvider = ({ children }) => {
     };
     reConnectWallet();
 
+    try{
     const handleAccountChanged = () => {
       window.location.reload();
     };
@@ -48,6 +49,10 @@ const WalletProvider = ({ children }) => {
       window.ethereum.removeListener("accountsChanged", handleAccountChanged);
       window.ethereum.removeListener("chainChanged", handleAccountChanged);
     };
+  }catch(err){
+    console.error(err);
+    return;
+  }
   }, []);
 
   const connectWallet = async () => {
