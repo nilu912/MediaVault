@@ -81,7 +81,7 @@ const WalletProvider = ({ children }) => {
     try {
       const tx = await contract.safeMint(signer.address, tokenURI);
       await tx.wait();
-      console.log("Minted:", tx.hash);
+      // console.log("Minted:", tx.hash);
       return tx.hash;
     } catch (err) {
       console.error(err);
@@ -104,6 +104,7 @@ const WalletProvider = ({ children }) => {
         }
       }
     } catch (err) {
+      return;
       console.error("err");
     } finally {
       return nfts;
@@ -135,6 +136,7 @@ const WalletProvider = ({ children }) => {
     setSigner(null);
     setWalletAddress(null);
     setContract(null);
+    localStorage.removeItem('wallet')
   };
   return (
     <WalletContext.Provider

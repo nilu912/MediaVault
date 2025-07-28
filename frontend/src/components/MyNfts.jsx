@@ -10,6 +10,9 @@ const MyNFTs = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+  useEffect(() => {
     if (!walletAddress) {
       setLoading(false);
       return;
@@ -19,7 +22,7 @@ const MyNFTs = () => {
       setLoading(true);
       try {
         const nftsData = await getAllMyNfts();
-        console.log("nftsData", nftsData);
+        // console.log("nftsData", nftsData);
 
         const arr = await Promise.all(
           nftsData.map(async (url) => {
@@ -30,6 +33,7 @@ const MyNFTs = () => {
 
         setNfts(arr);
       } catch (err) {
+        return;
         console.error("Error fetching NFTs:", err);
       } finally {
         setLoading(false);
@@ -53,10 +57,11 @@ const MyNFTs = () => {
   }
 
   return (
-    <div className="relative min-h-screen pt-24 px-4 bg-gradient-to-tr from-[#0f2027] via-[#203a43] to-[#2c5364] text-white overflow-x-hidden">
+    // <div className="relative min-h-screen pt-24 px-4 bg-gradient-to-tr from-[#0f2027] via-[#203a43] to-[#2c5364] text-white overflow-x-hidden max-w-full">
+    <div className="mt-24 p-2 overflow-x-hidden">
       {/* Background Animation */}
       <motion.div
-        className="absolute top-0 left-0 w-full h-full z-0 blur-[120px] opacity-20"
+        className="absolute top-0 left-0 w-full h-auto z-0 blur-[120px] opacity-20"
         animate={{ scale: [1, 1.15, 1] }}
         transition={{ duration: 10, repeat: Infinity }}
         style={{

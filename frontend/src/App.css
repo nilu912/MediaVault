@@ -1,6 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* App.css or index.css */
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: "Inter", sans-serif; /* optional */
+  background: #0f2027; /* fallback if Tailwind isn't working */
+}
 
 @layer utilities {
   .animate-flicker {
@@ -8,25 +22,25 @@
   }
 
   .neon-text-glow {
-    text-shadow: 0 0 5px #39FF14, 0 0 10px #39FF14, 0 0 20px #39FF14;
+    text-shadow: 0 0 5px #39ff14, 0 0 10px #39ff14, 0 0 20px #39ff14;
   }
 
   .neon-button {
-    box-shadow: 0 0 5px #39FF14, 0 0 10px #39FF14, 0 0 15px #39FF14;
+    box-shadow: 0 0 5px #39ff14, 0 0 10px #39ff14, 0 0 15px #39ff14;
   }
 }
 
 @keyframes flicker {
   0% {
     opacity: 0.85;
-    text-shadow: 0 0 5px #39FF14, 0 0 10px #39FF14;
+    text-shadow: 0 0 5px #39ff14, 0 0 10px #39ff14;
   }
   50% {
     opacity: 1;
-    text-shadow: 0 0 10px #39FF14, 0 0 20px #39FF14;
+    text-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14;
   }
   100% {
     opacity: 0.9;
-    text-shadow: 0 0 5px #39FF14, 0 0 15px #39FF14;
+    text-shadow: 0 0 5px #39ff14, 0 0 15px #39ff14;
   }
 }

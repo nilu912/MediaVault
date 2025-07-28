@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { useWallet } from "../context/WalletContext";
 
 const Header = () => {
-  const { isConnected, walletAddress, connectWallet } = useWallet();
+  const { isConnected, walletAddress, connectWallet, disconnectWallet } =
+    useWallet();
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-white/5 backdrop-blur-md border-b border-blue-500/20 shadow-[0_0_20px_#3B82F6]/30">
@@ -33,16 +34,26 @@ const Header = () => {
             </Link>
           ))}
         </nav>
+        <div className="flex gap-4">
+          {/* Wallet Button */}
+          <button
+            onClick={connectWallet}
+            className="ml-4 px-4 py-2 rounded-md border border-[#6EE7B7] text-[#6EE7B7] hover:bg-[#6EE7B7]/20 transition-all duration-300 shadow-[0_0_10px_#6EE7B7] hover:shadow-[0_0_20px_#6EE7B7] hover:scale-[103%]"
+          >
+            {!isConnected
+              ? "Connect Wallet"
+              : `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`}
+          </button>
 
-        {/* Wallet Button */}
-        <button
-          onClick={connectWallet}
-          className="ml-4 px-4 py-2 rounded-md border border-[#6EE7B7] text-[#6EE7B7] hover:bg-[#6EE7B7]/20 transition-all duration-300 shadow-[0_0_10px_#6EE7B7] hover:shadow-[0_0_20px_#6EE7B7] hover:scale-[103%]"
-        >
-          {!isConnected
-            ? "Connect Wallet"
-            : `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`}
-        </button>
+          {isConnected && (
+            <button
+              onClick={disconnectWallet}
+              className="px-3 py-2 text-sm rounded-md bg-red-500/10 text-red-400 border border-red-400 hover:bg-red-500/20 transition-all"
+            >
+              Disconnect
+            </button>
+          )}
+        </div>
       </div>
     </header>
   );
