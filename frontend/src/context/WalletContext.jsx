@@ -4,6 +4,9 @@ const WalletContext = createContext();
 export const useWallet = () => useContext(WalletContext);
 const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
 import contractABI from "../contract/MediaVault.json";
+import { AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import Alert from "@mui/material/Alert";
 
 const WalletProvider = ({ children }) => {
   const [walletAddress, setWalletAddress] = useState(null);
@@ -11,6 +14,16 @@ const WalletProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState();
   const [contract, setContract] = useState(null);
   const [signer, setSigner] = useState(null);
+  const [alert, setAlert] = useState({ type: "", message: "" });
+
+  useEffect(() => {
+    if (alert.message) {
+      const timeout = setTimeout(() => {
+        setAlert({ type: "", message: "" });
+      }, 4000);
+      return () => clearTimeout(timeout);
+    }
+  }, [alert]);
 
   useEffect(() => {
     const reConnectWallet = async () => {
@@ -39,25 +52,30 @@ const WalletProvider = ({ children }) => {
     };
     reConnectWallet();
 
-    try{
-    const handleAccountChanged = () => {
-      window.location.reload();
-    };
-    window.ethereum.on("accountsChanged", handleAccountChanged);
-    window.ethereum.on("chainChanged", handleAccountChanged);
-    return () => {
-      window.ethereum.removeListener("accountsChanged", handleAccountChanged);
-      window.ethereum.removeListener("chainChanged", handleAccountChanged);
-    };
-  }catch(err){
-    console.error(err);
-    return;
-  }
+    try {
+      const handleAccountChanged = () => {
+        window.location.reload();
+      };
+      window.ethereum.on("accountsChanged", handleAccountChanged);
+      window.ethereum.on("chainChanged", handleAccountChanged);
+      return () => {
+        window.ethereum.removeListener("accountsChanged", handleAccountChanged);
+        window.ethereum.removeListener("chainChanged", handleAccountChanged);
+      };
+    } catch (err) {
+      // console.error(err);
+      return;
+    }
   }, []);
 
   const connectWallet = async () => {
     if (!window.ethereum) {
-      alert("Metamaks not installed, please install it!");
+      setAlert({
+        type: "info",
+        message: "Metamaks not installed, please install it!",
+      });
+
+      // alert("Metamaks not installed, please install it!");
       return;
     }
     try {
@@ -141,24 +159,45 @@ const WalletProvider = ({ children }) => {
     setSigner(null);
     setWalletAddress(null);
     setContract(null);
-    localStorage.removeItem('wallet')
+    localStorage.removeItem("wallet");
   };
   return (
-    <WalletContext.Provider
-      value={{
-        walletAddress,
-        provider,
-        isConnected,
-        connectWallet,
-        disconnectWallet,
-        mintNFT,
-        contract,
-        getAllMyNfts,
-        getAllNfts,
-      }}
-    >
-      {children}
-    </WalletContext.Provider>
+    <>
+      <AnimatePresence>
+        {alert.message && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-6 z-100 left-1/2 transform -translate-x-1/2 z-50 w-[90%] max-w-md"
+          >
+            <Alert
+              severity={alert.type}
+              onClose={() => setAlert({ type: "", message: "" })}
+              variant="filled"
+            >
+              {alert.message}
+            </Alert>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <WalletContext.Provider
+        value={{
+          walletAddress,
+          provider,
+          isConnected,
+          connectWallet,
+          disconnectWallet,
+          mintNFT,
+          contract,
+          getAllMyNfts,
+          getAllNfts,
+        }}
+      >
+        {children}
+      </WalletContext.Provider>
+    </>
   );
 };
 export default WalletProvider;
