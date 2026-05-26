@@ -22,7 +22,7 @@ const Body = () => {
         <section className="text-center mt-8 h-screen flex flex-col justify-center items-center bg-darkBackground text-white max-h-screen overflow-hidden">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
             Explore Your Digital Assets
-          </h1>
+          </h1> 
           <p className="text-lg sm:text-xl text-white/70 mb-8">
             Decentralized NFT Viewer Powered by Blockchain
           </p>
