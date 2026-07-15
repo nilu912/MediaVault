@@ -1,4 +1,8 @@
-VITE_CONTRACT_ADDRESS=
-VITE_PINATA_API_KEY=
-VITE_PINATA_SECRET_API_KEY=
-VITE_PORT=
+// You can obtain the VITE_CONTRACT_ADDRESS from the smart contract deployment on the blockchain. After deploying your smart contract, you will receive a unique address that identifies your contract on the network. You can find this address in the deployment logs or on blockchain explorers like Etherscan (for Ethereum) or Polygonscan (for Polygon).
+VITE_CONTRACT_ADDRESS= 
+// You can obtain the VITE_PINATA_API_KEY from your Pinata account settings.
+VITE_PINATA_API_KEY= 
+// You can obtain the VITE_PINATA_SECRET_API_KEY from your Pinata account settings.
+VITE_PINATA_SECRET_API_KEY= 
+// You can specify the port number for your development server.
+VITE_PORT= 

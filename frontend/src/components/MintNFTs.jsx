@@ -297,6 +297,7 @@ const MintNFTs = () => {
               <p>Drag & drop file or click to select</p>
             )}
           </div> */}
+          
           {/* Dropzone Upload */}
           {!file ? (
             <div
